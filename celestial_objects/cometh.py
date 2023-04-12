@@ -18,3 +18,6 @@ class Cometh(CelestialObject):
 
     def get_create_params(self):
         return {**self._get_basic_params(), "direction": self.direction.value.lower()}
+
+    def __repr__(self):
+        return f"Cometh({self.row}, {self.column}, {self.direction.value})"

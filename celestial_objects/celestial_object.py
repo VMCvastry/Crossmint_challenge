@@ -10,11 +10,13 @@ class CelestialObject:
     def get_delete_params(self):
         return self._get_basic_params()
 
-    # abstract method
+    # Abstract method
     def get_create_params(self):
         raise NotImplementedError()
 
     def get_endpoint(self):
-        if self._endpoint is None:
+        if (
+            self._endpoint is None
+        ):  # It should not be called on an abstract CelestialObject
             raise NotImplementedError()
         return self._endpoint

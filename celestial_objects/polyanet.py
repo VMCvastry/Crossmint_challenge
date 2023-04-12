@@ -8,3 +8,6 @@ class Polyanet(CelestialObject):
 
     def get_create_params(self):
         return self._get_basic_params()
+
+    def __repr__(self):
+        return f"Polyanet({self.row}, {self.column})"

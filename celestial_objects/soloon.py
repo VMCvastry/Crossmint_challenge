@@ -18,3 +18,6 @@ class Soloon(CelestialObject):
 
     def get_create_params(self):
         return {**self._get_basic_params(), "color": self.color.value.lower()}
+
+    def __repr__(self):
+        return f"Soloon({self.row}, {self.column}, {self.color.value})"
