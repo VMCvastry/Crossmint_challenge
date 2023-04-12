@@ -2,8 +2,10 @@ import requests
 
 candidate_id = "7d2eedb3-970b-46a6-aed8-8e8468df09a4"
 
-# For phase one i just tested the api and didnt put much effort into making clean code.
-# For phase two i refactored everything.
+"""
+For phase one i just tested the api and didnt put much effort into making clean code.
+For phase two i refactored everything.
+"""
 
 
 class TooManyRequests(Exception):
