@@ -10,6 +10,27 @@ def parse_attribute(name: str) -> str:
     return name.split("_")[0]
 
 
+def create_obj_from_string(r, c, name) -> CelestialObject | None:
+    if name == "SPACE":
+        return None
+    elif name == "POLYANET":
+        return Polyanet(r, c)
+    elif "COMETH" in name:
+        direction = parse_attribute(name)
+        try:
+            return Cometh(r, c, direction)
+        except ValueError:
+            raise ValueError(f"Invalid direction for Cometh: {direction}")
+    elif "SOLOON" in name:
+        color = parse_attribute(name)
+        try:
+            return Soloon(r, c, color)
+        except ValueError:
+            raise ValueError(f"Invalid color for Soloon: {color}")
+    else:
+        raise ValueError(f"Invalid celestial object name: {name}")
+
+
 class Megaverse:
     def __init__(self):
         self.grid: list[list[CelestialObject | None]] = []
@@ -17,27 +38,10 @@ class Megaverse:
     @classmethod
     def from_strings(cls, strings: list[list[str]]) -> Megaverse:
         megaverse = cls()
-        for r, line in enumerate(strings):
-            row = []
-            for c, name in enumerate(line):
-                if name == "SPACE":
-                    row.append(None)
-                elif name == "POLYANET":
-                    row.append(Polyanet(r, c))
-                elif "COMETH" in name:
-                    direction = parse_attribute(name)
-                    try:
-                        row.append(Cometh(r, c, direction))
-                    except ValueError:
-                        raise ValueError(f"Invalid direction for Cometh: {direction}")
-                elif "SOLOON" in name:
-                    color = parse_attribute(name)
-                    try:
-                        row.append(Soloon(r, c, color))
-                    except ValueError:
-                        raise ValueError(f"Invalid color for Soloon: {color}")
-                else:
-                    raise ValueError(f"Invalid celestial object name: {name}")
+        for r, line in enumerate(
+            strings
+        ):  # A nested list comprehension would be more elegant but less readable.
+            row = [create_obj_from_string(r, c, name) for c, name in enumerate(line)]
             megaverse.grid.append(row)
         return megaverse
 
