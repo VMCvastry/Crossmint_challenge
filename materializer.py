@@ -9,29 +9,26 @@ class Materializer:
     class TooManyRequests(Exception):
         pass
 
-    def get_grid(self):
+    def get_grid(self) -> list[list[str]]:
         r = requests.get(
             f"https://challenge.crossmint.io/api/map/{self.candidate_id}/goal"
         )
         return r.json()["goal"]
 
-    def create_object(self, o: CelestialObject):
+    def perform_request(self, o: CelestialObject, params, request_func: callable):
         headers = {"Content-Type": "application/json"}
-        r = requests.post(
+        r = request_func(
             f"https://challenge.crossmint.io/api/{o.get_endpoint()}/",
-            json={"candidateId": self.candidate_id, **o.get_create_params()},
+            json={"candidateId": self.candidate_id, **params},
             headers=headers,
         )
         validate_response(r)
 
+    def create_object(self, o: CelestialObject):
+        self.perform_request(o, o.get_create_params(), requests.post)
+
     def delete_object(self, o: CelestialObject):
-        headers = {"Content-Type": "application/json"}
-        r = requests.delete(
-            f"https://challenge.crossmint.io/api/polyanets/",
-            json={"candidateId": self.candidate_id, **o.get_delete_params()},
-            headers=headers,
-        )
-        validate_response(r)
+        self.perform_request(o, o.get_delete_params(), requests.delete)
 
 
 def validate_response(r):
@@ -40,4 +37,4 @@ def validate_response(r):
     elif r.status_code != 200:
         raise Exception("Error: " + r.text)
     if r.text != "{}":
-        print(r.text, "TEXT")
+        raise Exception("Unusual response: " + r.text)
