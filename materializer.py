@@ -15,6 +15,12 @@ class Materializer:
         )
         return r.json()["goal"]
 
+    """
+        Requests are pretty slow therefore a valid improvement
+        would be to use asyncio to perform all the calls at the same time,
+        of course this would mean that we would get way more TooManyRequests error to retry.
+    """
+
     def perform_request(self, o: CelestialObject, params, request_func: callable):
         headers = {"Content-Type": "application/json"}
         r = request_func(
