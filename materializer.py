@@ -9,6 +9,13 @@ class Materializer:
     class TooManyRequests(Exception):
         pass
 
+    class RequestsImpasse(Exception):
+        def __init__(self, message, errors):
+            super().__init__(
+                "Server not allowing any new request, impasse reached: " + message
+            )
+            self.errors = errors
+
     def get_grid(self) -> list[list[str]]:
         r = requests.get(
             f"https://challenge.crossmint.io/api/map/{self.candidate_id}/goal"

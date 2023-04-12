@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import time
+
 from celestial_objects import *
 from materializer import Materializer
 
@@ -42,18 +44,22 @@ class Megaverse:
     def perform_action_on_object_type(
         self, obj_type: type[CelestialObject], action: callable[[CelestialObject], None]
     ):
+        backoff_time = 1
+        num_retries = 0
         for row in self.grid:
             for cell in row:
                 if cell is not None and isinstance(cell, obj_type):
-                    while 1:
-                        """
-                        Keep trying until we succeed,
-                        we could add a backoff time and a max number of retries
-                        to avoid putting too much pressure on the server.
-                        """
+                    while True:
                         try:
                             action(cell)
+                            backoff_time = 1
+                            num_retries = 0
                         except Materializer.TooManyRequests:
+                            if num_retries > 10:
+                                raise Materializer.RequestsImpasse
+                            num_retries += 1
+                            backoff_time *= 2
+                            time.sleep(backoff_time)
                             continue
                         break
 
