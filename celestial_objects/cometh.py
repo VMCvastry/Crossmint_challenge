@@ -1,34 +1,37 @@
 from __future__ import annotations
 from .celestial_object import CelestialObject
+from enum import Enum
 
 
-class ComethDirection:
-    directions = ["UP", "DOWN", "LEFT", "RIGHT"]
-    # UP = 0
-    # DOWN = 1
-    # LEFT = 2
-    # RIGHT = 3
-
-    @staticmethod
-    def get_direction(direction: str) -> int:
-        return ComethDirection.directions.index(direction)
-
-    @staticmethod
-    def get_name(direction: ComethDirection) -> str:
-        return ComethDirection.directions[direction]
+class ComethDirection(Enum):
+    UP = 0
+    DOWN = 1
+    LEFT = 2
+    RIGHT = 3
 
 
-def get_direction(direction) -> ComethDirection:
-    if direction == "UP":
-        return ComethDirection.UP
-    elif direction == "DOWN":
-        return ComethDirection.DOWN
-    elif direction == "LEFT":
-        return ComethDirection.LEFT
-    elif direction == "RIGHT":
-        return ComethDirection.RIGHT
-    else:
-        raise ValueError(f"Invalid direction name: {direction}")
+# def get_direction(direction) -> ComethDirection:
+#     if direction == "UP":
+#         return ComethDirection.UP
+#     elif direction == "DOWN":
+#         return ComethDirection.DOWN
+#     elif direction == "LEFT":
+#         return ComethDirection.LEFT
+#     elif direction == "RIGHT":
+#         return ComethDirection.RIGHT
+#     else:
+#         raise ValueError(f"Invalid direction name: {direction}")
+
+
+_directions = ["UP", "DOWN", "LEFT", "RIGHT"]
+
+
+def get_direction(direction: str) -> ComethDirection:
+    return ComethDirection(_directions.index(direction))
+
+
+def get_name(direction: ComethDirection) -> str:
+    return _directions[direction.value]
 
 
 class Cometh(CelestialObject):
