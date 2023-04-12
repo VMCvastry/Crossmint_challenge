@@ -24,10 +24,16 @@ class Megaverse:
                     row.append(Polyanet(r, c))
                 elif "COMETH" in name:
                     direction = parse_attribute(name)
-                    row.append(Cometh(r, c, direction))
+                    try:
+                        row.append(Cometh(r, c, direction))
+                    except ValueError:
+                        raise ValueError(f"Invalid direction for Cometh: {direction}")
                 elif "SOLOON" in name:
                     color = parse_attribute(name)
-                    row.append(Soloon(r, c, color))
+                    try:
+                        row.append(Soloon(r, c, color))
+                    except ValueError:
+                        raise ValueError(f"Invalid color for Soloon: {color}")
                 else:
                     raise ValueError(f"Invalid celestial object name: {name}")
             megaverse.grid.append(row)
@@ -40,23 +46,27 @@ class Megaverse:
             for cell in row:
                 if cell is not None and isinstance(cell, obj_type):
                     while 1:
+                        """
+                        Keep trying until we succeed,
+                        we could add a backoff time and a max number of retries
+                        to avoid putting too much pressure on the server.
+                        """
                         try:
                             action(cell)
-                            print(action, cell)
                         except Materializer.TooManyRequests:
                             continue
                         break
 
     def materialize_megaverse(self, materializer: Materializer):
-        # Assuming that the input grid is valid
+        # Assuming that the input grid is valid.
         self.perform_action_on_object_type(Polyanet, materializer.create_object)
-        # Soloons must be created after Polyplanets
+        # Soloons must be created after Polyplanets.
         self.perform_action_on_object_type(Soloon, materializer.create_object)
         self.perform_action_on_object_type(Cometh, materializer.create_object)
 
     def dematerialize_megaverse(self, materializer: Materializer):
         self.perform_action_on_object_type(Soloon, materializer.delete_object)
-        # Polyplanets must be deleted after Soloons
+        # Polyplanets must be deleted after Soloons.
         self.perform_action_on_object_type(Polyanet, materializer.delete_object)
         self.perform_action_on_object_type(Cometh, materializer.delete_object)
 
